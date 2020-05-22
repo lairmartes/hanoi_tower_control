@@ -12,4 +12,4 @@ doc/api/
 
 #files created by Idea
 /.idea/
-*.iml
+/hanoi_tower_control.iml
