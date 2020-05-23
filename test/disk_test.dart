@@ -25,5 +25,11 @@ void main() {
       assert(disk.isGreater(diskSameSize) == false);
     });
 
+    test('Launch error if disk is size zero',
+            () => expect(() => Disk(0), throwsArgumentError));
+
+    test('Launch error if disk is greater than 10',
+            () => expect(() => Disk(11), throwsArgumentError));
+
   });
 }
