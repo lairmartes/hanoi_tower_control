@@ -1,4 +1,4 @@
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'package:hanoi_tower_control/src/tower_elements.dart';
 import 'package:test/test.dart';
 import 'package:collection/collection.dart';
 
