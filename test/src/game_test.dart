@@ -8,19 +8,19 @@ void main() {
 
   group('Game Test', () {
 
-    test('Throw error when trying to grab if game is not started', () {
+    test('Throws error when trying to grab if game is not started', () {
       var gameTest = Game();
 
       expect(() => gameTest.grabFromFirstPin(), throwsStateError);
     });
 
-    test('Throw error when trying to drop if game is not started', () {
+    test('Throws error when trying to drop if game is not started', () {
       var gameTest = Game();
 
       expect(() => gameTest.dropDiskInSecondPin(Disk(5)), throwsStateError);
     });
 
-    test('Throw error when grabbing a disk without drop another grabbed', () {
+    test('Throws error when grabbing a disk without drop another grabbed', () {
       var gameTest = Game();
 
       gameTest.start(2);
@@ -28,6 +28,18 @@ void main() {
       () async {
         await gameTest.grabFromFirstPin();
         expect(() => gameTest.grabFromFirstPin(), throwsStateError);
+      };
+    });
+
+    test('Throws error when grab disk after game is over', () {
+      var gameTest = Game();
+
+      gameTest.start(1);
+
+      () async {
+        var disk = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk);
+        expect(() async => await gameTest.grabFromThirdPin(), throwsStateError);
       };
     });
 
@@ -111,7 +123,7 @@ void main() {
       };
     });
 
-    test('When play perfect game then the score is 100%', () {
+    test('When plays perfect game then the score is 100%', () {
       var gameTest = Game();
 
       Disk disk1;
