@@ -134,7 +134,38 @@ void main() {
         await gameTest.dropDiskInThirdPin(disk2);
         disk1 = await gameTest.grabFromFirstPin();
         progress = await gameTest.dropDiskInThirdPin(disk1);
+
         assert(progress.score() == 1);
+      };
+    });
+
+    test('When play is not perfect game then the score is less than 100%, but greater than zero', () {
+      var gameTest = Game();
+
+      Disk disk1;
+      Disk disk2;
+
+      Progress progress;
+
+      gameTest.start(2);
+
+      () async {
+        disk1 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk1);
+
+        disk2 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInSecondPin(disk2);
+
+        disk1 = await gameTest.grabFromThirdPin();
+        await gameTest.dropDiskInFirstPin(disk1);
+
+        disk2 = await gameTest.grabFromSecondPin();
+        await gameTest.dropDiskInThirdPin(disk2);
+
+        disk1 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInThirdPin(disk1);
+
+        assert(progress.score() > 0 && progress.score() < 1);
       };
     });
 
