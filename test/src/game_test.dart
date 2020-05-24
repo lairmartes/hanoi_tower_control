@@ -31,12 +31,15 @@ void main() {
     test('Start the game with two disks and error will rise when trying to remove third', () {
       var gameTest = Game();
 
+      Disk disk1;
+      Disk disk2;
+
       gameTest.start(2);
 
       () async {
-        var disk1 = await gameTest.grabFromFirstPin();
+        disk1 = await gameTest.grabFromFirstPin();
         await gameTest.dropDiskInSecondPin(disk1);
-        var disk2 = await gameTest.grabFromFirstPin();
+        disk2 = await gameTest.grabFromFirstPin();
         await gameTest.dropDiskInThirdPin(disk2);
         expect(() => gameTest.grabFromFirstPin(), throwsStateError);
       };
@@ -45,16 +48,95 @@ void main() {
     test('When does two moves counts two moves', () {
       var gameTest = Game();
 
+      Disk disk1;
+      Disk disk2;
+      Progress progress;
+
       gameTest.start(3);
 
       () async {
-        var disk1 = await gameTest.grabFromFirstPin();
+        disk1 = await gameTest.grabFromFirstPin();
         await gameTest.dropDiskInThirdPin(disk1);
-        var disk2 = await gameTest.grabFromFirstPin();
-        var progress = await gameTest.dropDiskInSecondPin(disk2);
 
+        disk2 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInSecondPin(disk2);
         assert(progress.moves() == 2);
       };
     });
+
+    test('When game is not completed then the score is zero', () {
+      var gameTest = Game();
+
+      Disk disk1;
+      Disk disk2;
+      Progress progress;
+
+      gameTest.start(3);
+
+          () async {
+        disk1 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk1);
+
+        disk2 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInSecondPin(disk2);
+        assert(progress.score() == 0);
+      };
+    });
+
+    test('Flags game is over in progress only after game is over', () {
+      var gameTest = Game();
+
+      Progress progress;
+      Disk disk1;
+      Disk disk2;
+
+      gameTest.start(2);
+
+      () async {
+
+        disk1 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInSecondPin(disk1);
+        assert(progress.isGameOver() == false);
+
+        disk2 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInThirdPin(disk2);
+        assert(progress.isGameOver() == false);
+
+        disk1 = await gameTest.grabFromSecondPin();
+        progress = await gameTest.dropDiskInThirdPin(disk1);
+        assert(progress.isGameOver());
+      };
+    });
+
+    test('When play perfect game then the score is 100%', () {
+      var gameTest = Game();
+
+      Disk disk1;
+      Disk disk2;
+      Disk disk3;
+
+      Progress progress;
+
+      gameTest.start(3);
+
+      () async {
+        disk1 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk1);
+        disk2 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInSecondPin(disk2);
+        disk1 = await gameTest.grabFromThirdPin();
+        await gameTest.dropDiskInSecondPin(disk1);
+        disk3 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk3);
+        disk1 = await gameTest.grabFromSecondPin();
+        await gameTest.dropDiskInFirstPin(disk1);
+        disk2 = await gameTest.grabFromSecondPin();
+        await gameTest.dropDiskInThirdPin(disk2);
+        disk1 = await gameTest.grabFromFirstPin();
+        progress = await gameTest.dropDiskInThirdPin(disk1);
+        assert(progress.score() == 1);
+      };
+    });
+
   });
 }

@@ -79,5 +79,5 @@ class Progress {
 
   int moves() => _movesDone;
   bool isGameOver() => _isGameOver;
-  double score() => _minimumMovesRequired / _movesDone;
+  double score() => _isGameOver ? 0 : _minimumMovesRequired / _movesDone;
 }
