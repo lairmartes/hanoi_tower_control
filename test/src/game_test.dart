@@ -42,5 +42,19 @@ void main() {
       };
     });
 
+    test('When does two moves counts two moves', () {
+      var gameTest = Game();
+
+      gameTest.start(3);
+
+      () async {
+        var disk1 = await gameTest.grabFromFirstPin();
+        await gameTest.dropDiskInThirdPin(disk1);
+        var disk2 = await gameTest.grabFromFirstPin();
+        var progress = await gameTest.dropDiskInSecondPin(disk2);
+
+        assert(progress.moves() == 2);
+      };
+    });
   });
 }
