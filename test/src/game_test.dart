@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:hanoi_tower_control/src/tower_game.dart';
 import 'package:hanoi_tower_control/src/tower_elements.dart';
 import 'package:test/test.dart';
 
 void main() {
+
   group('Game Test', () {
 
     test('Throw error when trying to grab if game is not started', () {
@@ -140,6 +143,7 @@ void main() {
     });
 
     test('When play is not perfect game then the score is less than 100%, but greater than zero', () {
+      var movesRequired = (int disks) => pow(2, disks);
       var gameTest = Game();
 
       Disk disk1;
@@ -165,7 +169,7 @@ void main() {
         disk1 = await gameTest.grabFromFirstPin();
         progress = await gameTest.dropDiskInThirdPin(disk1);
 
-        assert(progress.score() > 0 && progress.score() < 1);
+        assert(progress.score() == movesRequired(2) / 5);
       };
     });
 
