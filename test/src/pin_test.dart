@@ -63,5 +63,19 @@ void main() {
       assert(Disk(4) == pinTest.remove());
       assert(Disk(5) == pinTest.remove());
     });
+
+    test('Adding 5 disks and removing 2 the balance is 3', () {
+      var pinTest = Pin();
+
+      pinTest.add(Disk(7));
+      pinTest.add(Disk(6));
+      pinTest.add(Disk(5));
+      pinTest.add(Disk(4));
+      pinTest.add(Disk(3));
+      pinTest.remove();
+      pinTest.remove();
+
+      assert(3 == pinTest.diskBalance());
+    });
   });
 }
