@@ -25,7 +25,6 @@ void main() {
       for (var i = 4; i >= 0; i--) {
         pinTest.add(disksForTest[i]);
       }
-
       var disksRemoved = [];
 
       var i = 0;
@@ -33,10 +32,36 @@ void main() {
         disksRemoved.add(pinTest.remove());
         i++;
       }
-
       assert(ListEquality().equals(disksForTest, disksRemoved));
+    });
 
+    test('No disks can be found if pin is reset', () {
+      var pinTest = Pin();
+      pinTest.add(Disk(4));
+      pinTest.add(Disk(3));
+      pinTest.add(Disk(2));
+
+      pinTest.remove();
+
+      pinTest.reset();
+
+      pinTest.add(Disk(5));
+
+      pinTest.remove();
+
+      () => expect(pinTest.remove(), throwsStateError);
+    });
+
+    test('All disks can be removed after initializing a Pin', () {
+      var pinTest = Pin();
+
+      pinTest.init(5);
+
+      assert(Disk(1) == pinTest.remove());
+      assert(Disk(2) == pinTest.remove());
+      assert(Disk(3) == pinTest.remove());
+      assert(Disk(4) == pinTest.remove());
+      assert(Disk(5) == pinTest.remove());
     });
   });
-
 }
