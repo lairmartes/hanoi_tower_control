@@ -1,18 +1,14 @@
+import 'dart:math';
+
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
 import 'dart:io';
 
 void main() async {
   var game = Game();
-  int totalDisks;
 
   welcomeMessage();
 
-  do {
-    stdout.write('How many disks? (1-10) or 0 to quit > ');
-    var input = stdin.readLineSync();
-    totalDisks = int.tryParse(input);
-    totalDisks ??= 0;
-  } while (totalDisks < 0 || totalDisks > 10);
+  var totalDisks = _requestNumberFromZeroTo('How many disks?', 10);
 
   if (totalDisks == 0) return;
 
@@ -59,4 +55,17 @@ void welcomeMessage() {
   print('*'.padRight(sizeCentral, ' ') + message + '*'.padLeft(sizeCentral, ' '));
   print('*'.padRight(size - 1) + '*');
   print(''.padRight(size, '*'));
+}
+
+int _requestNumberFromZeroTo(String fieldMessage, int maxNumber) {
+  int result;
+
+  do {
+    stdout.write('$fieldMessage (1-$maxNumber) or 0 (or no number) to quit ');
+    var input = stdin.readLineSync();
+    result = int.tryParse(input);
+    result ??= 0;
+  } while (result < 0 || result > maxNumber);
+
+  return result;
 }
