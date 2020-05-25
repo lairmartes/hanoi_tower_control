@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:stack/stack.dart';
 
 class Disk {
@@ -16,6 +18,9 @@ class Disk {
 
   bool operator <(Object operand) =>
       identical(this, operand) || operand is Disk && _size < operand._size;
+
+  @override
+  String toString() => 'Disk size $_size';
 }
 
 class Pin {
@@ -60,5 +65,41 @@ class Pin {
     _balance = totalDisks;
   }
 
-  int diskBalance() => _balance;
+  PinDisks pinDisks() => PinDisks(_cloneStack(), _balance);
+
+  Stack _cloneStack() {
+    Stack<Disk> clone;
+    Stack<Disk> backup;
+
+    clone = Stack();
+    backup = Stack();
+
+    while (_stack.isNotEmpty) {
+      var disk = _stack.pop();
+      backup.push(disk);
+    }
+
+    while (backup.isNotEmpty) {
+      var disk = backup.pop();
+      _stack.push(disk);
+      clone.push(disk);
+    }
+
+    return clone;
+  }
+}
+
+class PinDisks {
+  List<Disk> disks;
+
+  PinDisks(Stack<Disk> diskStack, int totalDisks) {
+    ListQueue<Disk> tempDisks;
+    tempDisks = ListQueue(totalDisks);
+
+    while (diskStack.isNotEmpty) {
+      tempDisks.addLast(diskStack.pop());
+    }
+
+    disks = List.unmodifiable(tempDisks);
+  }
 }

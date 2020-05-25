@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hanoi_tower_control/src/tower_elements.dart';
 import 'package:test/test.dart';
 import 'package:collection/collection.dart';
@@ -75,7 +77,25 @@ void main() {
       pinTest.remove();
       pinTest.remove();
 
-      assert(3 == pinTest.diskBalance());
+      assert(3 == pinTest.pinDisks().disks.length);
+    });
+
+    test('Adding disks 9, 7, 5, 4 and 2 and removing the last ones, then disk sequence is 5, 7 and 9', () {
+      var pinTest = Pin();
+
+      pinTest.add(Disk(9));
+      pinTest.add(Disk(7));
+      pinTest.add(Disk(5));
+      pinTest.add(Disk(4));
+      pinTest.add(Disk(2));
+      pinTest.remove();
+      pinTest.remove();
+
+      var disks = pinTest.pinDisks().disks;
+
+      assert(disks[0] == Disk(5));
+      assert(disks[1] == Disk(7));
+      assert(disks[2] == Disk(9));
     });
   });
 }
