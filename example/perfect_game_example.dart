@@ -32,12 +32,14 @@ void main() async {
   do {
     var grabFrom = _requestNumberFromZeroTo('Grab pin from', 3);
     if (grabFrom < 1) break;
-    var diskGrabbed = await grabFunctions[grabFrom-1]() as Disk;
+    var progressGrab = await grabFunctions[grabFrom-1]() as Progress;
+    _showPins(progressGrab.disksFirstPin().disks, progressGrab.disksSecondPin().disks,
+              progressGrab.disksThirdPin().disks, totalDisks);
     var dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
     if (dropTo < 1) break;
-    progress = await dropFunctions[dropTo-1](diskGrabbed) as Progress;
+    progress = await dropFunctions[dropTo-1](progressGrab.diskGrabbed) as Progress;
     _showPins(progress.disksFirstPin().disks, progress.disksSecondPin().disks,
-        progress.disksThirdPin().disks, totalDisks);
+              progress.disksThirdPin().disks, totalDisks);
   } while (true);
 }
 
