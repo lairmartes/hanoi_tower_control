@@ -25,40 +25,74 @@ void main() async {
 
   var stepStartGame = await game.start(totalDisks);
 
-  _showPins(stepStartGame.disksFirstPin().disks, stepStartGame.disksSecondPin().disks,
-            stepStartGame.disksThirdPin().disks, totalDisks);
+  _showPins(stepStartGame.disksFirstPin().disks,
+            stepStartGame.disksSecondPin().disks,
+            stepStartGame.disksThirdPin().disks, totalDisks,
+            stepStartGame.diskGrabbed);
+
+  Disk diskGrabbed;
 
   do {
-    var grabFrom = _requestNumberFromZeroTo('Grab from pin', 3);
-    if (grabFrom < 1) break;
-    var stepGrabDisk = await grabFunctions[grabFrom-1]() as Progress;
-    _showPins(stepGrabDisk.disksFirstPin().disks, stepGrabDisk.disksSecondPin().disks,
-              stepGrabDisk.disksThirdPin().disks, totalDisks);
-    var dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
-    if (dropTo < 1) break;
-    var stepDropDisk = await dropFunctions[dropTo-1](stepGrabDisk.diskGrabbed) as Progress;
-    _showPins(stepDropDisk.disksFirstPin().disks, stepDropDisk.disksSecondPin().disks,
-              stepDropDisk.disksThirdPin().disks, totalDisks);
+    int grabFrom;
+    int dropTo;
+    do {
+      grabFrom = _requestNumberFromZeroTo('Grab from pin', 3);
+      if (grabFrom < 1) break;
+      try {
+        var stepGrabDisk = await grabFunctions[grabFrom - 1]() as Progress;
+        diskGrabbed = stepGrabDisk.diskGrabbed;
+        _showPins(stepGrabDisk.disksFirstPin().disks,
+                  stepGrabDisk.disksSecondPin().disks,
+                  stepGrabDisk.disksThirdPin().disks, totalDisks, diskGrabbed);
 
-    if (stepDropDisk.isGameOver) {
-      _message('Kudos! All disks were moved to third pin! Game is completed!');
-      break;
-    }
+        break;
+      } on StateError catch (e) {
+        _alertMessage(e.message);
+      }
+    } while(true);
+
+    do {
+      dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
+      if (dropTo < 1) break;
+      Progress stepDropDisk;
+      try {
+        stepDropDisk = await dropFunctions[dropTo - 1](diskGrabbed) as Progress;
+        _showPins(stepDropDisk.disksFirstPin().disks,
+                  stepDropDisk.disksSecondPin().disks,
+                  stepDropDisk.disksThirdPin().disks, totalDisks,
+                  stepDropDisk.diskGrabbed);
+
+        if (stepDropDisk.isGameOver) {
+          _message(
+              'Kudos! All disks were moved to third pin! Game is completed!');
+        }
+        break;
+      } on ArgumentError catch (e) {
+        _alertMessage(e.message);
+      }
+    } while (true);
+
+    if (grabFrom == 0 || dropTo == 0) break;
   } while (true);
 }
 
-void _showPins(List<Disk> pin1, List<Disk> pin2, List<Disk> pin3, totalDisks) {
+void _showPins(List<Disk> pin1, List<Disk> pin2, List<Disk> pin3, totalDisks, Disk diskGrabbed) {
 
   var linePin1 = _createPinLine(pin1, totalDisks);
   var linePin2 = _createPinLine(pin2, totalDisks);
   var linePin3 = _createPinLine(pin3, totalDisks);
 
   for (var i = 0; i < totalDisks; i++) {
+    var messageDiskGrabbed = '';
     var line1 = linePin1[i].padRight(totalDisks, ' ');
     var line2 = linePin2[i].padRight(totalDisks, ' ');
     var line3 = linePin3[i].padRight(totalDisks, ' ');
 
-    print('|   $line1   |   $line2   |   $line3   |');
+    if (i == totalDisks - 1 && diskGrabbed != null) {
+      messageDiskGrabbed = 'Disk grabbed: ' + ''.padRight(diskGrabbed.size, '█');
+    }
+
+    print('|   $line1   |   $line2   |   $line3   | $messageDiskGrabbed');
   }
 }
 
@@ -82,6 +116,10 @@ void _message(String message) {
   print('*'.padRight(sizeCentral, ' ') + message + '*'.padLeft(sizeCentral, ' '));
   print('*'.padRight(size - 1) + '*');
   print(''.padRight(size, '*'));
+}
+
+void _alertMessage(String message) {
+  print('--> $message !!!');
 }
 
 int _requestNumberFromZeroTo(String fieldMessage, int maxNumber) {
