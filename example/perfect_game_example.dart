@@ -6,6 +6,17 @@ import 'dart:io';
 void main() async {
   var game = Game();
 
+  var grabFunctions = <Function>[];
+  var dropFunctions = <Function>[];
+
+  grabFunctions.add(() => game.grabFromFirstPin());
+  grabFunctions.add(() => game.grabFromSecondPin());
+  grabFunctions.add(() => game.grabFromThirdPin());
+
+  dropFunctions.add((disk) => game.dropDiskInFirstPin(disk));
+  dropFunctions.add((disk) => game.dropDiskInSecondPin(disk));
+  dropFunctions.add((disk) => game.dropDiskInThirdPin(disk));
+
   welcomeMessage();
 
   var totalDisks = _requestNumberFromZeroTo('How many disks?', 10);
@@ -17,6 +28,17 @@ void main() async {
 
   _showPins(progress.disksFirstPin().disks, progress.disksSecondPin().disks,
            progress.disksThirdPin().disks, totalDisks);
+
+  do {
+    var grabFrom = _requestNumberFromZeroTo('Grab pin from', 3);
+    if (grabFrom < 1) break;
+    var diskGrabbed = await grabFunctions[grabFrom-1]() as Disk;
+    var dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
+    if (dropTo < 1) break;
+    progress = await dropFunctions[dropTo-1](diskGrabbed) as Progress;
+    _showPins(progress.disksFirstPin().disks, progress.disksSecondPin().disks,
+        progress.disksThirdPin().disks, totalDisks);
+  } while (true);
 }
 
 void _showPins(List<Disk> pin1, List<Disk> pin2, List<Disk> pin3, totalDisks) {
@@ -30,7 +52,7 @@ void _showPins(List<Disk> pin1, List<Disk> pin2, List<Disk> pin3, totalDisks) {
     var line2 = linePin2[i].padRight(totalDisks, ' ');
     var line3 = linePin3[i].padRight(totalDisks, ' ');
 
-    print('| $line1 | $line2 | $line3 |');
+    print('|   $line1   |   $line2   |   $line3   |');
   }
 }
 
