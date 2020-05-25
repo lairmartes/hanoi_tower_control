@@ -10,7 +10,7 @@ class Game {
   int _minimumMovesRequired;
   int _totalDisks;
 
-  bool _isGrabbing;
+  bool _isGrabbing = false;
 
   Game() {
     _totalDisks = 0;
@@ -26,26 +26,35 @@ class Game {
     _movesDone = 0;
     _minimumMovesRequired = pow(2, _totalDisks) - 1;
     _isGrabbing = false;
-    return Progress(_movesDone, _isGameOver(), _minimumMovesRequired,
+    return Progress(_movesDone, _isGameOver(), null, _minimumMovesRequired,
                     _pinFirst.pinDisks(), _pinSecond.pinDisks(), _pinThird.pinDisks());
   }
 
-  Future<Disk> grabFromFirstPin() async {
-    return _removeFrom(_pinFirst);
+  Future<Progress> grabFromFirstPin() async {
+    var disk = _removeFrom(_pinFirst);
+    return Progress(_movesDone, _isGameOver(), disk, _minimumMovesRequired,
+                    _pinFirst.pinDisks(), _pinSecond.pinDisks(), _pinThird.pinDisks());
   }
 
-  Future<Disk> grabFromSecondPin() async {
-    return _removeFrom(_pinSecond);
+  Future<Progress> grabFromSecondPin() async {
+    var disk = _removeFrom(_pinSecond);
+    return Progress(_movesDone, _isGameOver(), disk, _minimumMovesRequired,
+        _pinFirst.pinDisks(), _pinSecond.pinDisks(), _pinThird.pinDisks());
   }
 
-  Future<Disk> grabFromThirdPin() async {
-    return _removeFrom(_pinThird);
+  Future<Progress> grabFromThirdPin() async {
+    var disk = _removeFrom(_pinThird);
+    return Progress(_movesDone, _isGameOver(), disk, _minimumMovesRequired,
+        _pinFirst.pinDisks(), _pinSecond.pinDisks(), _pinThird.pinDisks());
   }
 
   Disk _removeFrom(Pin pin) {
+    if (_isGrabbing) throw StateError('Can not grab another dis while one is grabbed');
     if (_totalDisks < 1) throw StateError('Game has not started');
     if (_isGameOver()) throw StateError('Game is over and no disk can be removed.');
-    return pin.remove();
+    var result = pin.remove();
+    _isGrabbing = true;
+    return result;
   }
 
   Future<Progress> dropDiskInFirstPin(Disk disk) async {
@@ -53,20 +62,20 @@ class Game {
   }
 
   Future<Progress> dropDiskInSecondPin(Disk disk) async {
-    return dropDisk(_pinFirst, disk);
+    return dropDisk(_pinSecond, disk);
   }
 
   Future<Progress> dropDiskInThirdPin(Disk disk) async {
-    return dropDisk(_pinFirst, disk);
+    return dropDisk(_pinThird, disk);
   }
 
   Progress dropDisk(Pin pin, Disk disk) {
     if (_totalDisks < 1) throw StateError('Game has not started');
     if (_isGameOver()) throw StateError('Game is over and no disk can be added');
-    if (_isGrabbing) throw StateError('Can not grab another dis while one is grabbed');
     pin.add(disk);
     _isGrabbing = false;
-    return Progress(_movesDone, _isGameOver(), _minimumMovesRequired,
+    _movesDone++;
+    return Progress(_movesDone, _isGameOver(), null, _minimumMovesRequired,
                     _pinFirst.pinDisks(), _pinSecond.pinDisks(), _pinThird.pinDisks());
   }
 
@@ -74,19 +83,19 @@ class Game {
 }
 
 class Progress {
-  final int _movesDone;
-  final bool _isGameOver;
+  final int moves;
+  final bool isGameOver;
   final int _minimumMovesRequired;
+  final Disk diskGrabbed;
   final PinDisks _disksFirstPin;
   final PinDisks _disksSecondPin;
   final PinDisks _disksThirdPin;
 
-  Progress(this._movesDone, this._isGameOver, this._minimumMovesRequired,
+  Progress(this.moves, this.isGameOver,
+           this.diskGrabbed, this._minimumMovesRequired,
            this._disksFirstPin, this._disksSecondPin, this._disksThirdPin);
 
-  int moves() => _movesDone;
-  bool isGameOver() => _isGameOver;
-  double score() => _isGameOver ? 0 : _minimumMovesRequired / _movesDone;
+  double score() => isGameOver ? _minimumMovesRequired / moves : 0;
   PinDisks disksFirstPin() => _disksFirstPin;
   PinDisks disksSecondPin() => _disksSecondPin;
   PinDisks disksThirdPin() => _disksThirdPin;

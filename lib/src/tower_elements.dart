@@ -3,24 +3,24 @@ import 'dart:collection';
 import 'package:stack/stack.dart';
 
 class Disk {
-  final int _size;
+  final int size;
 
-  Disk(this._size) {
-    if (_size < 1 || _size > 10) throw ArgumentError('Disk size must be between 1 and 11');
+  Disk(this.size) {
+    if (size < 1 || size > 10) throw ArgumentError('Disk size must be between 1 and 11');
   }
 
   @override
   bool operator ==(Object operand) =>
-      identical(this, operand) || operand is Disk && _size == operand._size;
+      identical(this, operand) || operand is Disk && size == operand.size;
 
   bool operator >(Object operand) =>
-      identical(this, operand) || operand is Disk && _size > operand._size;
+      identical(this, operand) || operand is Disk && size > operand.size;
 
   bool operator <(Object operand) =>
-      identical(this, operand) || operand is Disk && _size < operand._size;
+      identical(this, operand) || operand is Disk && size < operand.size;
 
   @override
-  String toString() => 'Disk size $_size';
+  String toString() => 'Disk size $size';
 }
 
 class Pin {
