@@ -20,7 +20,7 @@ void main() async {
   _message(List.unmodifiable([
       'Welcome to Hanoi Tower game!',
       'Move all disks from pin 1 to pin 3',
-      'However, a bigger pin can not be put over a shorter one!',
+      'However, a bigger disk can not be put over a shorter one! ',
       ' ---------------------------------------------- ',
       'According to an Indian legend, if a game with 64 disks ...',
       '... is completed ...',
@@ -78,7 +78,7 @@ void main() async {
               'Kudos! All disks were moved to third pin! Game is completed!',
               '----------------------------------',
               '>> You did it in $moves moves',
-              '>> Your score was $score / 100',
+              '>> Your score was $score / 100' + (score == 100 ? ' ':''),
               '----------------------------------'
           ]));
           dropTo = 0;
