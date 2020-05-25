@@ -17,7 +17,14 @@ void main() async {
   dropFunctions.add((disk) => game.dropDiskInSecondPin(disk));
   dropFunctions.add((disk) => game.dropDiskInThirdPin(disk));
 
-  _message('Welcome to Hanoi Tower game');
+  _message(List.unmodifiable([
+      'Welcome to Hanoi Tower game!',
+      'Move all disks from pin 1 to pin 3',
+      'However, a bigger pin can not be put over a shorter one!',
+      ' ---------------------------------------------- ',
+      'According to an Indian legend, if a game with 64 disks ...',
+      '... is completed ...',
+      '... then the world will end!']));
 
   var totalDisks = _requestNumberFromZeroTo('How many disks?', 10);
 
@@ -51,6 +58,8 @@ void main() async {
       }
     } while(true);
 
+    if (grabFrom == 0) break;
+
     do {
       dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
       if (dropTo < 1) break;
@@ -63,8 +72,9 @@ void main() async {
                   stepDropDisk.diskGrabbed);
 
         if (stepDropDisk.isGameOver) {
-          _message(
-              'Kudos! All disks were moved to third pin! Game is completed!');
+          _message( List.filled(1,
+              'Kudos! All disks were moved to third pin! Game is completed!'));
+          dropTo = 0;
         }
         break;
       } on ArgumentError catch (e) {
@@ -108,12 +118,14 @@ List<String> _createPinLine(List<Disk> pin, totalDisks) {
   return result;
 }
 
-void _message(String message) {
+void _message(List<String> messages) {
   var size = 70;
-  var sizeCentral = ((size - message.length) / 2).round();
   print(''.padRight(size, '*'));
   print('*'.padRight(size - 1) + '*');
-  print('*'.padRight(sizeCentral, ' ') + message + '*'.padLeft(sizeCentral, ' '));
+  messages.forEach((message) {
+    var sizeCentral = ((size - message.length) / 2).round();
+    print('*'.padRight(sizeCentral, ' ') + message + '*'.padLeft(sizeCentral, ' '));
+  } );
   print('*'.padRight(size - 1) + '*');
   print(''.padRight(size, '*'));
 }
