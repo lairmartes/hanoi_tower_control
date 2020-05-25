@@ -72,8 +72,15 @@ void main() async {
                   stepDropDisk.diskGrabbed);
 
         if (stepDropDisk.isGameOver) {
-          _message( List.filled(1,
-              'Kudos! All disks were moved to third pin! Game is completed!'));
+          var moves = stepDropDisk.moves;
+          var score = (stepDropDisk.score() * 100).toInt();
+          _message( List.unmodifiable([
+              'Kudos! All disks were moved to third pin! Game is completed!',
+              '----------------------------------',
+              '>> You did it in $moves moves',
+              '>> Your score was $score / 100',
+              '----------------------------------'
+          ]));
           dropTo = 0;
         }
         break;
