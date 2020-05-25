@@ -17,29 +17,33 @@ void main() async {
   dropFunctions.add((disk) => game.dropDiskInSecondPin(disk));
   dropFunctions.add((disk) => game.dropDiskInThirdPin(disk));
 
-  welcomeMessage();
+  _message('Welcome to Hanoi Tower game');
 
   var totalDisks = _requestNumberFromZeroTo('How many disks?', 10);
 
   if (totalDisks == 0) return;
 
-  Progress progress;
-  progress = await game.start(totalDisks);
+  var stepStartGame = await game.start(totalDisks);
 
-  _showPins(progress.disksFirstPin().disks, progress.disksSecondPin().disks,
-           progress.disksThirdPin().disks, totalDisks);
+  _showPins(stepStartGame.disksFirstPin().disks, stepStartGame.disksSecondPin().disks,
+            stepStartGame.disksThirdPin().disks, totalDisks);
 
   do {
-    var grabFrom = _requestNumberFromZeroTo('Grab pin from', 3);
+    var grabFrom = _requestNumberFromZeroTo('Grab from pin', 3);
     if (grabFrom < 1) break;
-    var progressGrab = await grabFunctions[grabFrom-1]() as Progress;
-    _showPins(progressGrab.disksFirstPin().disks, progressGrab.disksSecondPin().disks,
-              progressGrab.disksThirdPin().disks, totalDisks);
+    var stepGrabDisk = await grabFunctions[grabFrom-1]() as Progress;
+    _showPins(stepGrabDisk.disksFirstPin().disks, stepGrabDisk.disksSecondPin().disks,
+              stepGrabDisk.disksThirdPin().disks, totalDisks);
     var dropTo = _requestNumberFromZeroTo('Drop in pin', 3);
     if (dropTo < 1) break;
-    progress = await dropFunctions[dropTo-1](progressGrab.diskGrabbed) as Progress;
-    _showPins(progress.disksFirstPin().disks, progress.disksSecondPin().disks,
-              progress.disksThirdPin().disks, totalDisks);
+    var stepDropDisk = await dropFunctions[dropTo-1](stepGrabDisk.diskGrabbed) as Progress;
+    _showPins(stepDropDisk.disksFirstPin().disks, stepDropDisk.disksSecondPin().disks,
+              stepDropDisk.disksThirdPin().disks, totalDisks);
+
+    if (stepDropDisk.isGameOver) {
+      _message('Kudos! All disks were moved to third pin! Game is completed!');
+      break;
+    }
   } while (true);
 }
 
@@ -70,9 +74,8 @@ List<String> _createPinLine(List<Disk> pin, totalDisks) {
   return result;
 }
 
-void welcomeMessage() {
-  var size = 60;
-  var message = 'Welcome to Hanoi Tower Example';
+void _message(String message) {
+  var size = 70;
   var sizeCentral = ((size - message.length) / 2).round();
   print(''.padRight(size, '*'));
   print('*'.padRight(size - 1) + '*');
