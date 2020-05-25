@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:hanoi_tower_control/src/tower_game.dart';
 import 'package:hanoi_tower_control/src/tower_elements.dart';
+import 'package:hanoi_tower_control/src/tower_game.dart';
 import 'package:test/test.dart';
 
 void main() {

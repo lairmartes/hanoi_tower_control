@@ -1,8 +1,6 @@
-import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:hanoi_tower_control/src/tower_elements.dart';
 import 'package:test/test.dart';
-import 'package:collection/collection.dart';
 
 void main() {
   group('Pin Test', () {

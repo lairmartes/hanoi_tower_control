@@ -1,7 +1,6 @@
-import 'dart:math';
+import 'dart:io';
 
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
-import 'dart:io';
 
 void main() async {
   var game = Game();

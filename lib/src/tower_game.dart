@@ -1,5 +1,6 @@
-import 'package:hanoi_tower_control/hanoi_tower_control.dart';
 import 'dart:math';
+
+import 'package:hanoi_tower_control/hanoi_tower_control.dart';
 
 class Game {
   final Pin _pinFirst = Pin();
