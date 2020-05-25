@@ -1,9 +1,20 @@
 import 'package:hanoi_tower_control/hanoi_tower_control.dart';
+import 'dart:io';
 
 void main() async {
   var game = Game();
+  int totalDisks;
 
-  var totalDisks = 5;
+  welcomeMessage();
+
+  do {
+    stdout.write('How many disks? (1-10) or 0 to quit > ');
+    var input = stdin.readLineSync();
+    totalDisks = int.tryParse(input);
+    totalDisks ??= 0;
+  } while (totalDisks < 0 || totalDisks > 10);
+
+  if (totalDisks == 0) return;
 
   Progress progress;
   progress = await game.start(totalDisks);
@@ -34,7 +45,18 @@ List<String> _createPinLine(List<Disk> pin, totalDisks) {
   for (var i = 0; i < emptyLines; i++) {
     result.add('');
   }
-  pin.forEach((disk) => result.add(''.padRight(disk.size, '▒')));
+  pin.forEach((disk) => result.add(''.padRight(disk.size, '█')));
 
   return result;
+}
+
+void welcomeMessage() {
+  var size = 60;
+  var message = 'Welcome to Hanoi Tower Example';
+  var sizeCentral = ((size - message.length) / 2).round();
+  print(''.padRight(size, '*'));
+  print('*'.padRight(size - 1) + '*');
+  print('*'.padRight(sizeCentral, ' ') + message + '*'.padLeft(sizeCentral, ' '));
+  print('*'.padRight(size - 1) + '*');
+  print(''.padRight(size, '*'));
 }
