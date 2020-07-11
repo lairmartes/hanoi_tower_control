@@ -100,4 +100,14 @@ class Progress {
   PinDisks disksFirstPin() => _disksFirstPin;
   PinDisks disksSecondPin() => _disksSecondPin;
   PinDisks disksThirdPin() => _disksThirdPin;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Progress &&
+      moves == other.moves &&
+      isGameOver == other.isGameOver &&
+      score() == other.score() &&
+      disksFirstPin().disks.length == other.disksFirstPin().disks.length &&
+      disksSecondPin().disks.length == other.disksSecondPin().disks.length &&
+      disksThirdPin().disks.length == other.disksThirdPin().disks.length;
 }
