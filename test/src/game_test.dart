@@ -206,5 +206,25 @@ void main() {
       assert(step4.disksSecondPin().disks.length == 1);
       assert(step4.disksThirdPin().disks.length == 1);
     });
+
+    test('When starting two different games with same disk totals, then progresses are equal', () async {
+      var game1 = Game();
+      var game2 = Game();
+
+      var progress1 = await game1.start(3);
+      var progress2 = await game2.start(3);
+
+      expect(progress1, progress2);
+    });
+
+    test('When starting two different games with different disk totals, then progresses are equal', () async {
+      var game1 = Game();
+      var game2 = Game();
+
+      var progress1 = await game1.start(3);
+      var progress2 = await game2.start(4);
+
+      expect(progress1, isNot(progress2));
+    });
   });
 }
